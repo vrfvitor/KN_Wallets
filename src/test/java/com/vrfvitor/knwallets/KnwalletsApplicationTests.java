@@ -1,13 +1,10 @@
 package com.vrfvitor.knwallets;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.*;
 
 @SpringBootTest
-class KnwalletsApplicationTests {
+public class KnwalletsApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+    public static final String BASE_URL = "http://localhost:8080/api";
 
 }
