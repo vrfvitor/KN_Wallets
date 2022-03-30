@@ -1,12 +1,15 @@
 package com.vrfvitor.knwallets.resource;
 
+import com.vrfvitor.knwallets.dto.*;
 import com.vrfvitor.knwallets.model.*;
 import com.vrfvitor.knwallets.service.*;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.*;
+import org.springframework.web.util.*;
 
+import javax.validation.*;
 import java.util.*;
 
 @RestController
@@ -27,6 +30,13 @@ public class WalletRestController {
         if (optionalWallet.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(optionalWallet.get());
+    }
+
+    @PostMapping
+    private ResponseEntity<Wallet> create(@RequestBody @Valid WalletForm form, UriComponentsBuilder uriBuilder) {
+        var wallet = this.service.save(form.converter());
+        var uri = uriBuilder.path("/wallets/{id}").buildAndExpand(wallet.getId()).toUri();
+        return ResponseEntity.created(uri).body(wallet);
     }
 
 }

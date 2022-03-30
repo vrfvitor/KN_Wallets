@@ -1,8 +1,10 @@
 package com.vrfvitor.knwallets.model;
 
 import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.*;
 
 @Data
@@ -12,9 +14,11 @@ import java.util.*;
 public class Wallet {
 
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    private Long balanceCents;
+    private Long balanceCents = 0L;
 
     @Embedded
     @AttributeOverrides({
@@ -24,4 +28,7 @@ public class Wallet {
     })
     private Person owner;
 
+    public Wallet(Person owner) {
+        this.owner = owner;
+    }
 }

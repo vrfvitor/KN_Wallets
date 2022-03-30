@@ -1,5 +1,6 @@
 package com.vrfvitor.knwallets.resource;
 
+import com.vrfvitor.knwallets.dto.*;
 import io.restassured.*;
 import io.restassured.http.*;
 import io.zonky.test.db.*;
@@ -15,12 +16,14 @@ import static org.hamcrest.Matchers.*;
 @AutoConfigureEmbeddedDatabase
 @Sql({"/schema.sql", "/data-test.sql"})
 @AutoConfigureWebMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class WalletRestControllerTest {
 
     private static final String URI = BASE_URL.concat("/wallets");
 
     @Test
+    @Order(1)
     public void checkIndexGetsAll() {
         var matchesOneOfIds = anyOf(
                 is("3d3b1a58-cf7b-4c75-8daf-af62b6f1851a"),
@@ -29,18 +32,19 @@ public class WalletRestControllerTest {
 
         RestAssured
                 .given()
-                    .contentType(ContentType.JSON)
+                .contentType(ContentType.JSON)
                 .when()
-                    .get(URI)
+                .get(URI)
                 .then()
-                    .log().body()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("size()", is(2))
-                    .body("[0].id", matchesOneOfIds)
-                    .body("[1].id", matchesOneOfIds);
+                .log().body()
+                .statusCode(HttpStatus.OK.value())
+                .body("size()", is(2))
+                .body("[0].id", matchesOneOfIds)
+                .body("[1].id", matchesOneOfIds);
     }
 
     @Test
+    @Order(1)
     public void checkShowReturns404GivenNonexistentId() {
         var nonExistingId = "1f810060-d6b3-437d-b71d-765d7e80c141";
 
@@ -52,6 +56,36 @@ public class WalletRestControllerTest {
                 .then()
                 .log().body()
                 .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    public void checkCreateSuccessfully() {
+        var person = new WalletForm("Vitor", "Ferreira", "vrfvitor@hotmail.com");
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(person)
+                .when()
+                .post(URI)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    public void checkFailToCreateDueMissingRequiredData() {
+        var person = new WalletForm("Vitor", null, "his@mail.com");
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(person)
+                .when()
+                .post(URI)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
 }

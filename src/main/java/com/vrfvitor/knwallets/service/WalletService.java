@@ -20,4 +20,8 @@ public class WalletService {
     public Optional<Wallet> getById(UUID id) {
         return repository.findById(id);
     }
+
+    public Wallet save(Wallet wallet) {
+        return repository.save(wallet);
+    }
 }
