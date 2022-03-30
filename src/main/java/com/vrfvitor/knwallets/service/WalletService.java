@@ -24,4 +24,10 @@ public class WalletService {
     public Wallet save(Wallet wallet) {
         return repository.save(wallet);
     }
+
+    public Wallet deposit(Wallet wallet, Long amountCents) {
+        var newBalance = wallet.getBalanceCents() + amountCents;
+        wallet.setBalanceCents(newBalance);
+        return repository.save(wallet);
+    }
 }

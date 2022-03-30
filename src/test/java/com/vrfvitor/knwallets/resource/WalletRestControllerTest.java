@@ -88,4 +88,33 @@ public class WalletRestControllerTest {
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
+    @Test
+    public void checkDepositsSuccessfully() {
+        var depositUri = String.format("%s/%s/%s", URI, "3d3b1a58-cf7b-4c75-8daf-af62b6f1851a", "deposit");
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body("{ \"amountCents\": 5000 }")
+                .when()
+                .post(depositUri)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.OK.value())
+                .body("balanceCents", is(55000));
+    }
+
+    @Test
+    public void checkDepositFails() {
+        var depositUri = String.format("%s/%s/%s", URI, "3d3b1a58-cf7b-4c75-8daf-af62b6f1851a", "deposit");
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body("{ \"amountCents\": -30 }")
+                .when()
+                .post(depositUri)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
 }

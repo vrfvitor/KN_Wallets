@@ -39,4 +39,12 @@ public class WalletRestController {
         return ResponseEntity.created(uri).body(wallet);
     }
 
+    @PostMapping("{id}/deposit")
+    private ResponseEntity<Wallet> deposit(@PathVariable("id") UUID id, @RequestBody @Valid ValueForm form) {
+        var optionalWallet = service.getById(id);
+        if (optionalWallet.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        var wallet = service.deposit(optionalWallet.get(), form.getAmountCents());
+        return ResponseEntity.ok(wallet);
+    }
 }
