@@ -6,6 +6,8 @@ import javax.persistence.*;
 
 @Data
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 public class Person {
 
     private String firstName;
