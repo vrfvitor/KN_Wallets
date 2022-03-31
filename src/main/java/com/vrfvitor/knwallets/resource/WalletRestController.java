@@ -25,7 +25,7 @@ public class WalletRestController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<Wallet> show(@PathVariable("id") UUID id) {
+    public ResponseEntity<Wallet> show(@PathVariable("id") UUID id) {
         var optionalWallet = service.getById(id);
         if (optionalWallet.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -33,18 +33,28 @@ public class WalletRestController {
     }
 
     @PostMapping
-    private ResponseEntity<Wallet> create(@RequestBody @Valid WalletForm form, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Wallet> create(@RequestBody @Valid WalletForm form, UriComponentsBuilder uriBuilder) {
         var wallet = this.service.save(form.converter());
         var uri = uriBuilder.path("/wallets/{id}").buildAndExpand(wallet.getId()).toUri();
         return ResponseEntity.created(uri).body(wallet);
     }
 
-    @PostMapping("{id}/deposit")
-    private ResponseEntity<Wallet> deposit(@PathVariable("id") UUID id, @RequestBody @Valid ValueForm form) {
+    @PostMapping("/{id}/deposit")
+    public ResponseEntity<Wallet> deposit(@PathVariable("id") UUID id, @RequestBody @Valid ValueForm form) {
         var optionalWallet = service.getById(id);
         if (optionalWallet.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         var wallet = service.deposit(optionalWallet.get(), form.getAmountCents());
         return ResponseEntity.ok(wallet);
     }
+
+    @PostMapping("/{id}/withdraw")
+    public ResponseEntity<Wallet> withdraw(@PathVariable("id") UUID id, @RequestBody @Valid ValueForm form) {
+        var optionalWallet = service.getById(id);
+        if (optionalWallet.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        var wallet = service.withdraw(optionalWallet.get(), form.getAmountCents());
+        return ResponseEntity.ok(wallet);
+    }
+
 }
