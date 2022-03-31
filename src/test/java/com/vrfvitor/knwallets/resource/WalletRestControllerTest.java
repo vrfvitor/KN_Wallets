@@ -11,19 +11,18 @@ import org.springframework.http.*;
 import org.springframework.test.context.jdbc.*;
 
 import static com.vrfvitor.knwallets.KnwalletsApplicationTests.*;
+import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD;
 import static org.hamcrest.Matchers.*;
 
-@AutoConfigureEmbeddedDatabase
 @Sql({"/schema.sql", "/data-test.sql"})
+@AutoConfigureEmbeddedDatabase(refresh = AFTER_EACH_TEST_METHOD)
 @AutoConfigureWebMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class WalletRestControllerTest {
 
     private static final String URI = BASE_URL.concat("/wallets");
 
     @Test
-    @Order(1)
     public void checkIndexGetsAll() {
         var matchesOneOfIds = anyOf(
                 is("3d3b1a58-cf7b-4c75-8daf-af62b6f1851a"),
@@ -44,7 +43,6 @@ public class WalletRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void checkShowReturns404GivenNonexistentId() {
         var nonExistingId = "1f810060-d6b3-437d-b71d-765d7e80c141";
 
@@ -115,6 +113,35 @@ public class WalletRestControllerTest {
                 .then()
                 .log().body()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void checkWithdrawsSuccessfully() {
+        var depositUri = String.format("%s/%s/%s", URI, "3d3b1a58-cf7b-4c75-8daf-af62b6f1851a", "withdraw");
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body("{ \"amountCents\": 500 }")
+                .when()
+                .post(depositUri)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.OK.value())
+                .body("balanceCents", is(49500));
+    }
+
+    @Test
+    public void checkWithdrawFails() {
+        var depositUri = String.format("%s/%s/%s", URI, "55560ee8-3536-46af-8525-027e93810476", "withdraw");
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body("{ \"amountCents\": 120000 }")
+                .when()
+                .post(depositUri)
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
     }
 
 }

@@ -3,7 +3,9 @@ package com.vrfvitor.knwallets.service;
 import com.vrfvitor.knwallets.model.*;
 import com.vrfvitor.knwallets.repository.*;
 import lombok.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.*;
+import org.springframework.web.server.*;
 
 import java.util.*;
 
@@ -27,6 +29,14 @@ public class WalletService {
 
     public Wallet deposit(Wallet wallet, Long amountCents) {
         var newBalance = wallet.getBalanceCents() + amountCents;
+        wallet.setBalanceCents(newBalance);
+        return repository.save(wallet);
+    }
+
+    public Wallet withdraw(Wallet wallet, Long withdrawCents) {
+        var newBalance = wallet.getBalanceCents() - withdrawCents;
+        if (newBalance < 0)
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         wallet.setBalanceCents(newBalance);
         return repository.save(wallet);
     }
