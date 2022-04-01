@@ -1,0 +1,53 @@
+.Header {
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  background-color: #ffffff;
+  padding: 15px 0 20px 20px;
+
+  .logoBox {
+    display: flex;
+    align-items: center;
+
+    span {
+      font-family: 'Lato', sans-serif;
+      font-size: 2rem;
+      color: #013369;
+    }
+
+    img {
+      width: 65px;
+      margin-top: -5px;
+    }
+  }
+
+  .mediaBox {
+    display: flex;
+    height: 60px;
+    width: 200px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    .medias {
+      display: flex;
+      justify-content: space-around;
+      width: 115px;
+      margin: 5px 0 0;
+
+      img {
+        width: 35px;
+      }
+    }
+
+    .withLove {
+      font-size: 10px;
+      font-family: ui-monospace;
+      font-weight: 600;
+      color: #767676;
+      margin: 0 auto;
+      padding-top: 7px;
+    }
+  }
+}
