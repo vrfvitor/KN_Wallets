@@ -15,6 +15,7 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/wallets")
+@CrossOrigin("*")
 public class WalletRestController {
 
     private final WalletService service;

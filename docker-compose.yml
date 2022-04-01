@@ -2,7 +2,7 @@ version: '3'
 services:
   db:
     image: postgres
-    container_name: kn_db
+    container_name: kn-db
     networks:
       - kn-bridge
     ports:
@@ -13,13 +13,23 @@ services:
 
   app:
     image: vrfvitor/knwallets
-    container_name: kn_app
+    container_name: kn-app
     networks:
       - kn-bridge
     depends_on:
       - db
     ports:
       - 8080:8080
+
+  spa:
+    image: vrfvitor/knwallets-spa
+    container_name: kn-spa
+    networks:
+      - kn-bridge
+    depends_on:
+      - app
+    ports:
+      - 3000:3000
 
 networks:
   kn-bridge:

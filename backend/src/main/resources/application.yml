@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:kn_db}:${DB_PORT:5432}/${DB_NAME:kn_wallets}
+    url: jdbc:postgresql://${DB_HOST:kn-db}:${DB_PORT:5432}/${DB_NAME:kn_wallets}
     username: ${DB_USER:postgres}
     password: ${DB_PASSWD:kn_admin}
   sql:
